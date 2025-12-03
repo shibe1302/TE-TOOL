@@ -27,24 +27,8 @@ $hwnd = [WinAPI]::GetForegroundWindow()
 [WinAPI]::MoveWindow($hwnd, 100, 100, 800, 400, $true)
 
 
-
-
 # ==================== CONFIGURATION ====================
-# $ScpHost = "127.0.0.1"
-# $ScpUser = "shibe"
-# $ScpPassword = "shibe1302"
-# $Protocol = "SFTP"                          
-# $RemoteFolder = "/tess2/ucg"                          
-# $LocalDestination = "E:\download_log"               
-# $winscpDllPath = "C:\Program Files (x86)\WinSCP\WinSCPnet.dll"
-# $MacFilePath = "E:\nghien_cuu_FTU\UCG_FIBER_40pcs_log\data.txt"          
-# $MaxScanThreads = 10  
-$MaxDownloadThreads = 10  
-$ConnectionTimeout = 5 
-# $Port = "22"
 
-# ==================== GLOBAL VARIABLES ====================
-$Global:MacRegex = [regex]::new("(_[^_]+_)", [System.Text.RegularExpressions.RegexOptions]::Compiled)
 
 # ==================== VALIDATION FUNCTION ====================
 function Validate-Configuration {
@@ -304,7 +288,7 @@ $ScanJobBlock = {
                     if ($fileInfo.IsDirectory) { continue }
                     
                     # Extract MAC từ filename
-                    if ($fileInfo.Name -match "(_[^_]+_)") {
+                    if ($fileInfo.Name -match "(_[^_]+_)" -or $fileInfo.Name -match "([^_]+_)") {
                         $extractedMac = $matches[1].Trim('_').ToUpper()
                         
                         # Kiểm tra MAC có trong HashSet không - O(1) complexity
@@ -370,9 +354,9 @@ foreach ($job in $ScanJobs) {
         
         foreach ($key in $result.Files.Keys) {
             $FilesToDownload.Add(@{
-                    RemotePath = $key
-                    FileName   = $result.Files[$key]
-                })
+                RemotePath = $key
+                FileName   = $result.Files[$key]
+            })
         }
     }
 }

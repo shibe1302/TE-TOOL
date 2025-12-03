@@ -1,15 +1,16 @@
-# param(
-#     [string]$SourceFolder,
-#     [string]$DestinationFolder,
-#     [string]$MacFilePath,
-#     [int]$MaxScanThreads = 10,
-#     [int]$MaxCopyThreads = 10
-# )
-[string]$SourceFolder="E:\SFTP_Data\tess2\ucg"
-[string]$DestinationFolder="E:\download_log"
-[string]$MacFilePath="E:\nghien_cuu_FTU\UCG_FIBER_40pcs_log\data.txt"
-[int]$MaxScanThreads = 10
-[int]$MaxCopyThreads = 10
+param(
+    [string]$SourceFolder,
+    [string]$DestinationFolder,
+    [string]$MacFilePath,
+    [int]$MaxScanThreads
+
+)
+    [int]$MaxCopyThreads = 10
+# [string]$SourceFolder="E:\SFTP_Data\tess2\ucg"
+# [string]$DestinationFolder="E:\download_log"
+# [string]$MacFilePath="E:\nghien_cuu_FTU\UCG_FIBER_40pcs_log\data.txt"
+# [int]$MaxScanThreads = 10
+# [int]$MaxCopyThreads = 10
 
 # ==================== WINDOW POSITIONING ====================
 Add-Type @"

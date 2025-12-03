@@ -79,21 +79,20 @@ if (Test-Path $locLogPath) {
     Remove-Item -Path $locLogPath -Recurse -Force
 }
 
-# Tạo folder loc_log mới
+
 Write-Host "Tạo folder loc_log..."
 New-Item -Path $locLogPath -ItemType Directory -Force | Out-Null
 
 pr -p $zipFile
 pr -p $nameFolder
 
-# Giải nén vào folder loc_log
 Write-Host "Đang giải nén..."
 & "C:\Program Files\7-Zip\7z.exe" x $zipFile -aoa -o"$locLogPath" -y
 
 #================= Tim folder LOG ===================
 $locLogPath = Join-Path -Path $folder_containing_zip -ChildPath "loc_log"
 
-# Tìm folder có tên là "log" hoặc "LOG" trong loc_log
+
 $found = Get-ChildItem -Path $locLogPath -Recurse -Directory -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -imatch "^log$" }
 
@@ -158,7 +157,7 @@ $passFolder = Join-Path $parent_of_log "PASS"
 $failFolder = Join-Path $parent_of_log "FAIL"
 New-Item -Path $passFolder -ItemType Directory -Force | Out-Null
 New-Item -Path $failFolder -ItemType Directory -Force | Out-Null
-$cac_tram_test = @("DL", "PT", "PT0", "PT1", "PT2", "PT3", "PT4", "BURN", "FT1", "FT2", "FT3", "FT4", "FT5", "FT6")
+$cac_tram_test = @("DL", "PT", "PT0", "PT1", "PT2", "PT3", "PT4", "BURN", "FT1", "FT2", "FT3", "FT4", "FT5", "FT6", "FT7","600I")
 $cac_tram_test | ForEach-Object {
     New-Item -Path (Join-Path $passFolder $_) -ItemType Directory -Force | Out-Null
     New-Item -Path (Join-Path $failFolder $_) -ItemType Directory -Force | Out-Null
@@ -224,43 +223,49 @@ $log_files = Get-ChildItem -Path $final_LOG_FOLDER -File
 $count_pass = 0
 $count_wrong_version = 0
 $total_duplicate = 0
-foreach ($_ in $log_files) {
-    switch -regex ($_) {
-        "^PASS.*_DOWNLOAD_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "DL"; $count_pass++; break }
-        "^PASS.*_PT0_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "PT0"; $count_pass++; break }
-        "^PASS.*_PT1_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "PT1"; $count_pass++; break }
-        "^PASS.*_PT2_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "PT2"; $count_pass++; break }
-        "^PASS.*_PT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "PT3"; $count_pass++; break }
-        "^PASS.*_PT4_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "PT4"; $count_pass++; break }
-        "^PASS.*_PT_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "PT"; $count_pass++; break }
-        "^PASS.*_BURN_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "BURN"; $count_pass++; break }
-        "^PASS.*_FT1_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "FT1"; $count_pass++; break }
-        "^PASS.*_FT2_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "FT2"; $count_pass++; break }
-        "^PASS.*_FT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "FT3"; $count_pass++; break }
-        "^PASS.*_FT4_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "FT4"; $count_pass++; break }
-        "^PASS.*_FT5_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "FT5"; $count_pass++; break }
-        "^PASS.*_FT6_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $_ -state "FT6"; $count_pass++; break }
+$count_fail=0
+foreach ($file in $log_files) {
+    $fileName = $file.Name
+    
+    # Phan loai PASS
+    switch -regex ($fileName) {
+	"^PASS.*_600I_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "600I"; $count_pass++; continue }
+        "^PASS.*_DOWNLOAD_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "DL"; $count_pass++; continue }
+        "^PASS.*_PT0_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT0"; $count_pass++; continue }
+        "^PASS.*_PT1_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT1"; $count_pass++; continue }
+        "^PASS.*_PT2_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT2"; $count_pass++; continue }
+        "^PASS.*_PT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT3"; $count_pass++; continue }
+        "^PASS.*_PT4_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT4"; $count_pass++; continue }
+        "^PASS.*_PT_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT"; $count_pass++; continue }
+        "^PASS.*_BURN_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "BURN"; $count_pass++; continue }
+        "^PASS.*_FT1_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT1"; $count_pass++; continue }
+        "^PASS.*_FT2_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT2"; $count_pass++; continue }
+        "^PASS.*_FT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT3"; $count_pass++; continue }
+        "^PASS.*_FT4_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT4"; $count_pass++; continue }
+        "^PASS.*_FT5_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT5"; $count_pass++; continue }
+        "^PASS.*_FT6_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT6"; $count_pass++; continue }
+        "^PASS.*_FT7_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT7"; $count_pass++; continue }
+        
     }
-}
-
-#================= Phan loai log fail ===================
-$count_fail = 0
-foreach ($_ in $log_files) {
-    switch -regex ($_) {
-        "^FAIL.*_DOWNLOAD_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "DL"; $count_fail++; break }
-        "^FAIL.*_PT0_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "PT0"; $count_fail++; break }
-        "^FAIL.*_PT1_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "PT1"; $count_fail++; break }
-        "^FAIL.*_PT2_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "PT2"; $count_fail++; break }
-        "^FAIL.*_PT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "PT3"; $count_fail++; break }
-        "^FAIL.*_PT4_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "PT4"; $count_fail++; break }
-        "^FAIL.*_PT_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "PT"; $count_fail++; break }
-        "^FAIL.*_BURN_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "BURN"; $count_fail++; break }
-        "^FAIL.*_FT1_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "FT1"; $count_fail++; break }
-        "^FAIL.*_FT2_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "FT2"; $count_fail++; break }
-        "^FAIL.*_FT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "FT3"; $count_fail++; break }
-        "^FAIL.*_FT4_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "FT4"; $count_fail++; break }
-        "^FAIL.*_FT5_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "FT5"; $count_fail++; break }
-        "^FAIL.*_FT6_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $_ -state "FT6"; $count_fail++; break }
+    
+    # Phan loai FAIL
+    switch -regex ($fileName) {
+        "^FAIL.*_DOWNLOAD_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "DL"; $count_fail++; continue }
+        "^FAIL.*_PT0_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT0"; $count_fail++; continue }
+        "^FAIL.*_PT1_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT1"; $count_fail++; continue }
+        "^FAIL.*_PT2_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT2"; $count_fail++; continue }
+        "^FAIL.*_PT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT3"; $count_fail++; continue }
+        "^FAIL.*_PT4_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT4"; $count_fail++; continue }
+        "^FAIL.*_PT_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT"; $count_fail++; continue }
+        "^FAIL.*_BURN_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "BURN"; $count_fail++; continue }
+        "^FAIL.*_FT1_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT1"; $count_fail++; continue }
+        "^FAIL.*_FT2_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT2"; $count_fail++; continue }
+        "^FAIL.*_FT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT3"; $count_fail++; continue }
+        "^FAIL.*_FT4_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT4"; $count_fail++; continue }
+        "^FAIL.*_FT5_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT5"; $count_fail++; continue }
+        "^FAIL.*_FT6_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT6"; $count_fail++; continue }
+        "^FAIL.*_FT7_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT7"; $count_fail++; continue }
+        "^FAIL.*_600I_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "600I"; $count_fail++; continue }
     }
 }
 
@@ -276,23 +281,23 @@ foreach ($tram in $cac_tram_test) {
 }
 
 # =================== Gom file 600I vào folder riêng ======================
-$path_600I=""
-foreach ($tram in $cac_tram_test) {
-    $folderPath_P = Join-Path $passFolder $tram
-    if (Test-Path $folderPath_P) {
-        $files600I = Get-ChildItem -Path $folderPath_P -File -Filter "*_600I_*" -ErrorAction SilentlyContinue
-        if ($files600I -and $files600I.Count -gt 0) {
-            $newFolder = Join-Path $folderPath_P "600I_Files"
-            $path_600I=$nameFolder
-            New-Item -Path $newFolder -ItemType Directory -Force | Out-Null
-            foreach ($f in $files600I) {
-                try { Move-Item -Path $f.FullName -Destination $newFolder -Force }
-                catch { Write-Host "Error moving file $($f.FullName) to $newFolder" -ForegroundColor Red }
-            }
-            Write-Host "Moved $($files600I.Count) file 600I  $tram to 600I_Files folder " -ForegroundColor Green
-        }
-    }
-}
+# $path_600I=""
+# foreach ($tram in $cac_tram_test) {
+#     $folderPath_P = Join-Path $passFolder $tram
+#     if (Test-Path $folderPath_P) {
+#         $files600I = Get-ChildItem -Path $folderPath_P -File -Filter "*_600I_*" -ErrorAction SilentlyContinue
+#         if ($files600I -and $files600I.Count -gt 0) {
+#             $newFolder = Join-Path $folderPath_P "600I_Files"
+#             $path_600I=$nameFolder
+#             New-Item -Path $newFolder -ItemType Directory -Force | Out-Null
+#             foreach ($f in $files600I) {
+#                 try { Move-Item -Path $f.FullName -Destination $newFolder -Force }
+#                 catch { Write-Host "Error moving file $($f.FullName) to $newFolder" -ForegroundColor Red }
+#             }
+#             Write-Host "Moved $($files600I.Count) file 600I  $tram to 600I_Files folder " -ForegroundColor Green
+#         }
+#     }
+# }
 
 # =================== Gom file khác loại (.log/.txt) vào folder riêng ======================
 foreach ($tram in $cac_tram_test) {
@@ -412,15 +417,7 @@ foreach ($tram in $cac_tram_test) {
 
 
 }
-#================= 600I remove dup mac===================
-    
-if ([string]::IsNullOrWhiteSpace($path_600I)) {
-    Write-Warning "Folder is null or empty, skipping..."
-    
-}
-else {
-    remove_duplicate_mac -tramFolder $path_600I
-}
+
 
 
 Write-Host "`n`n"
