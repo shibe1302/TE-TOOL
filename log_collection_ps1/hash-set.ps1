@@ -9,9 +9,10 @@ param(
     [string]$LocalDestination,
     [string]$winscpDllPath,
     [string]$MacFilePath,
-    [int]$MaxScanThreads
+    [int]$MaxScanThreads=5
 )
-
+[int]$ConnectionTimeout = 15
+[int]$MaxDownloadThreads = 10 # seconds
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -81,7 +82,7 @@ function Validate-Configuration {
         }
     }
     
-    Write-Host "Tất cả cau hinh hop le`n" -ForegroundColor Green
+    Write-Host "Tat ca cau hinh hop le`n" -ForegroundColor Green
 }
 
 # ==================== LOAD DLL ====================
