@@ -73,15 +73,18 @@ $nameFolder = [System.IO.Path]::GetFileNameWithoutExtension($zipFile)
 $folder_containing_zip = Split-Path $zipFile
 
 # Kiểm tra và xóa folder loc_log nếu tồn tại
-$locLogPath = Join-Path -Path $folder_containing_zip -ChildPath "loc_log"
+$timeStamp = Get-Date -Format "HH-mm"
+$folderName = "Log-$($timeStamp)"
+$locLogPath = Join-Path -Path $folder_containing_zip -ChildPath $folderName
 if (Test-Path $locLogPath) {
-    Write-Host "Đang xóa folder loc_log cũ..."
+    Write-Host "Remove folder $($folderName) old..."
     Remove-Item -Path $locLogPath -Recurse -Force
 }
 
 
-Write-Host "Tạo folder loc_log..."
+Write-Host "Tao folder $($folderName)..."
 New-Item -Path $locLogPath -ItemType Directory -Force | Out-Null
+
 
 pr -p $zipFile
 pr -p $nameFolder
@@ -90,7 +93,7 @@ Write-Host "Đang giải nén..."
 & "C:\Program Files\7-Zip\7z.exe" x $zipFile -aoa -o"$locLogPath" -y
 
 #================= Tim folder LOG ===================
-$locLogPath = Join-Path -Path $folder_containing_zip -ChildPath "loc_log"
+
 
 
 $found = Get-ChildItem -Path $locLogPath -Recurse -Directory -ErrorAction SilentlyContinue |

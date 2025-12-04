@@ -182,7 +182,7 @@ function join_and_move_fail {
     $path_to_file = Join-Path $log_dir $file_name
     $path_to_des = [System.IO.Path]::Combine($failFolder, $state, $file_name)
     try {
-        Move-Item -Path $path_to_file -Destination $path_to_des -ErrorAction Stop
+        Copy-Item -Path $path_to_file -Destination $path_to_des -ErrorAction Stop
     }
     catch {
         Write-Host "Error moving file $path_to_file to $state" -ForegroundColor Red
@@ -223,7 +223,6 @@ foreach ($file in $log_files) {
         "^PASS.*_PT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT3"; $count_pass++; continue }
         "^PASS.*_PT4_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT4"; $count_pass++; continue }
         "^PASS.*_PT_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT"; $count_pass++; continue }
-        "^PASS.*_BURN_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "BURN"; $count_pass++; continue }
         "^PASS.*_FT1_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT1"; $count_pass++; continue }
         "^PASS.*_FT2_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT2"; $count_pass++; continue }
         "^PASS.*_FT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT3"; $count_pass++; continue }
@@ -243,7 +242,6 @@ foreach ($file in $log_files) {
         "^FAIL.*_PT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT3"; $count_fail++; continue }
         "^FAIL.*_PT4_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT4"; $count_fail++; continue }
         "^FAIL.*_PT_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT"; $count_fail++; continue }
-        "^FAIL.*_BURN_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "BURN"; $count_fail++; continue }
         "^FAIL.*_FT1_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT1"; $count_fail++; continue }
         "^FAIL.*_FT2_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT2"; $count_fail++; continue }
         "^FAIL.*_FT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT3"; $count_fail++; continue }
@@ -274,31 +272,7 @@ foreach ($tram in $cac_tram_test) {
         }
     }
 }
-
-# =================== Gom file 600I vào folder riêng ======================
-Write-Host "`n"
-Write-Host "============ Gom file 600I =============" -ForegroundColor Cyan
-$path_600I=""
-foreach ($tram in $cac_tram_test) {
-    $folderPath_P = Join-Path $passFolder $tram
-    if (Test-Path $folderPath_P) {
-        $files600I = Get-ChildItem -Path $folderPath_P -File -Filter "*_600I_*" -ErrorAction SilentlyContinue
-        if ($files600I -and @($files600I).Count -gt 0) {
-            $newFolder = Join-Path $folderPath_P "600I_Files"
-            $path_600I=$newFolder
-            New-Item -Path $newFolder -ItemType Directory -Force | Out-Null
-            foreach ($f in $files600I) {
-                try {
-                    Move-Item -Path $f.FullName -Destination $newFolder -Force
-                }
-                catch {
-                    Write-Host "Error moving file $($f.FullName) to $newFolder" -ForegroundColor Red
-                }
-            }
-            Write-Host "Moved $(@($files600I).Count) file 600I tram $tram to 600I_Files folder" -ForegroundColor Green
-        }
-    }
-}
+$path_600I=Join-Path $passFolder "600I"
 
 # =================== Gom file khác loại (.log/.txt) vào folder riêng ======================
 Write-Host "`n"
