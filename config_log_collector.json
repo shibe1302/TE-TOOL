@@ -1,17 +1,15 @@
 {
   "Host": "127.0.0.1",
-  "User": "aaa",
-  "Password": "aaa",
+  "User": "shibe",
+  "Password": "shibe1302",
   "Protocol": "SFTP",
   "PortNumber": "22",
   "LocalDownloadDestination": "E:\\download_log",
   "WinscpDLL": "C:\\Program Files (x86)\\WinSCP\\WinSCPnet.dll",
   "RemoteFolderScan": [
-    "E:\\SFTP_Data\\tess2\\ucg\\UCGFIBEFT3",
-    "E:\\SFTP_Data\\tess2\\ucg\\UCGFIBEFT3 - Copy (2)",
-    "E:\\SFTP_Data\\tess2\\ucg"
+    "/tess2/ucg"
   ],
-  "MacFilePath": "E:\\nghien_cuu_FTU\\UCG_FIBER_40pcs_log\\data.txt",
+  "MacFilePath": "E:\\nghien_cuu_FTU\\gui lam\\USWPROAGT01_106pcs_2643013452\\data.txt",
   "MaxThreadScan": "10",
-  "ScanLocalMode": true
+  "ScanLocalMode": false
 }

@@ -154,10 +154,9 @@ $ScanJobBlock = {
                 $ScannedCount++
                 
                 # Extract MAC tu filename
-                if (($file.Name -match "(_[^_]+_)") -or ($file.Name -match "([^_]+_)")) {
+                if (($file.Name -match "([^_]{12,}_)")) {
                     $extractedMac = $matches[1].Trim('_').ToUpper()
-                    
-                    # Kiem tra MAC co trong HashSet khong - O(1) complexity
+                    write-Host $extractedMac -ForegroundColor Yellow
                     if ($MacDbSet.Contains($extractedMac)) {
                         $LocalResults[$file.FullName] = $file.Name
                     }

@@ -289,7 +289,7 @@ $ScanJobBlock = {
                     if ($fileInfo.IsDirectory) { continue }
                     
                     # Extract MAC từ filename
-                    if ($fileInfo.Name -match "(_[^_]+_)" -or $fileInfo.Name -match "([^_]+_)") {
+                    if ($fileInfo.Name -match "([^_]{12,}_)") {
                         $extractedMac = $matches[1].Trim('_').ToUpper()
                         
                         # Kiểm tra MAC có trong HashSet không - O(1) complexity
