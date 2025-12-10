@@ -378,7 +378,7 @@ function remove_duplicate_mac {
                 Where-Object { $_.Extension -in @(".log", ".txt") }
 
     $groups = $logFiles | Group-Object {
-        if ($_.Name -match "(_[^_]+_)") { $matches[1] }
+        if ($_.Name -match "([^_]{12,}_)") { $matches[1].TrimEnd("_") }
         else { "NO_MAC" }
     }
 

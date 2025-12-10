@@ -1,7 +1,8 @@
 #Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 param (
-    [string]$LOG_DIR
+    [string]$zipFile
 )
+
 
 Set-StrictMode -Version Latest
 
@@ -16,7 +17,7 @@ function Auto-Detect-Version {
     param (
         [string]$logFolder,
         [string]$pattern,
-        [int]$threshold
+        [int]$threshold = 150
     )
     
     $versionCount = @{}
@@ -67,23 +68,52 @@ function Auto-Detect-Version {
     return $null
 }
 
+#================= giai nen file va don dep ===================
+$nameFolder = [System.IO.Path]::GetFileNameWithoutExtension($zipFile)
+$folder_containing_zip = Split-Path $zipFile
+
+# Kiểm tra và xóa folder loc_log nếu tồn tại
+$timeStamp = Get-Date -Format "HH-mm"
+$folderName = "Log-$($timeStamp)"
+$locLogPath = Join-Path -Path $folder_containing_zip -ChildPath $folderName
+if (Test-Path $locLogPath) {
+    Write-Host "Remove folder $($folderName) old..."
+    Remove-Item -Path $locLogPath -Recurse -Force
+}
+
+
+Write-Host "Tao folder $($folderName)..."
+New-Item -Path $locLogPath -ItemType Directory -Force | Out-Null
+
+
+pr -p $zipFile
+pr -p $nameFolder
+
+Write-Host "Đang giải nén..."
+& "C:\Program Files\7-Zip\7z.exe" x $zipFile -aoa -o"$locLogPath" -y
+
 #================= Tim folder LOG ===================
-$final_LOG_FOLDER = ""
-$found = Get-ChildItem -Path $LOG_DIR -Recurse -Directory -ErrorAction SilentlyContinue |
-         Where-Object { $_.Name -imatch "^log$" }
+
+
+
+$found = Get-ChildItem -Path $locLogPath -Recurse -Directory -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -imatch "^log$" }
 
 if ($found) {
     $final_LOG_FOLDER = $found[0].FullName
     Write-Host "Da tim thay folder log: $final_LOG_FOLDER" -ForegroundColor Green
 }
 else {
-    Write-Host "Khong tim thay folder log!" -ForegroundColor Yellow
-    Write-Host "Hay dat ten folder chua file LOG thanh LOG hoac log!" -ForegroundColor Yellow
+    Write-Host "Khong tim thay folder log trong loc_log!" -ForegroundColor Yellow
+    Write-Host "Hay dam bao file zip chua folder LOG hoac log!" -ForegroundColor Yellow
     exit
 }
 
 $parent_of_log = (Get-Item $final_LOG_FOLDER).Parent.FullName
-$Tong_file_log = @((Get-Item $final_LOG_FOLDER).GetFiles()).Count
+Write-Output "Parent cua log: $parent_of_log"
+
+$Tong_file_log = (Get-ChildItem -Path $final_LOG_FOLDER -File).Count
+Write-Output "Tong so file log: $Tong_file_log"
 
 #================= TU DONG PHAT HIEN FTU VA FCD ===================
 Write-Host "`n"
@@ -128,26 +158,15 @@ Start-Sleep -Seconds 2
 #================= Tao cac folder cua cac tram test ===================
 $passFolder = Join-Path $parent_of_log "PASS"
 $failFolder = Join-Path $parent_of_log "FAIL"
-
-# Nếu folder tồn tại thì xóa toàn bộ
-if (Test-Path $passFolder) {
-    Remove-Item $passFolder -Recurse -Force
-}
-if (Test-Path $failFolder) {
-    Remove-Item $failFolder -Recurse -Force
-}
-
-# Tạo lại folder
 New-Item -Path $passFolder -ItemType Directory -Force | Out-Null
 New-Item -Path $failFolder -ItemType Directory -Force | Out-Null
-
-$cac_tram_test = @("DL","PT" ,"PT0", "PT1", "PT2", "PT3", "PT4", "BURN", "FT1", "FT2", "FT3", "FT4", "FT5", "FT6", "FT7","600I")
+$cac_tram_test = @("DL", "PT", "PT0", "PT1", "PT2", "PT3", "PT4", "BURN", "FT1", "FT2", "FT3", "FT4", "FT5", "FT6", "FT7","600I")
 $cac_tram_test | ForEach-Object {
     New-Item -Path (Join-Path $passFolder $_) -ItemType Directory -Force | Out-Null
     New-Item -Path (Join-Path $failFolder $_) -ItemType Directory -Force | Out-Null
 }
 
-#================= Kiem tra FTU, FCD ========================
+#================= Kiem tra FTU ========================
 function is_FTU_correct {
     param ([string]$path, [string]$ftu)
     if ([string]::IsNullOrEmpty($ftu)) { return $true }
@@ -182,10 +201,10 @@ function join_and_move_fail {
     $path_to_file = Join-Path $log_dir $file_name
     $path_to_des = [System.IO.Path]::Combine($failFolder, $state, $file_name)
     try {
-        Copy-Item -Path $path_to_file -Destination $path_to_des -ErrorAction Stop
+        Move-Item -Path $path_to_file -Destination $path_to_des
     }
     catch {
-        Write-Host "Error moving file $path_to_file to $state" -ForegroundColor Red
+        Write-Host "Error moving file $path_to_file to $state : " -ForegroundColor Red
     }
 }
 
@@ -194,22 +213,20 @@ function join_and_move_pass {
     $path_to_file = Join-Path $log_dir $file_name
     $path_to_des = [System.IO.Path]::Combine($passFolder, $state, $file_name)
     try {
-        Move-Item -Path $path_to_file -Destination $path_to_des -ErrorAction Stop
+        Move-Item -Path $path_to_file -Destination $path_to_des
     }
     catch {
-        Write-Host "Error moving file $path_to_file to $state" -ForegroundColor Red
+        Write-Host "Error moving file $path_to_file to $state : " -ForegroundColor Red
     }
 }
 
-#================= Phan loai log ===================
-Write-Host "`n"
-Write-Host "============ Phan loai log PASS va FAIL =============" -ForegroundColor Cyan
-Start-Sleep -Seconds 1
-
 $log_files = Get-ChildItem -Path $final_LOG_FOLDER -File
-$count_pass = 0
-$count_fail = 0
 
+#================= Phan loai log pass ===================
+$count_pass = 0
+$count_wrong_version = 0
+$total_duplicate = 0
+$count_fail=0
 foreach ($file in $log_files) {
     $fileName = $file.Name
     
@@ -223,6 +240,7 @@ foreach ($file in $log_files) {
         "^PASS.*_PT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT3"; $count_pass++; continue }
         "^PASS.*_PT4_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT4"; $count_pass++; continue }
         "^PASS.*_PT_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT"; $count_pass++; continue }
+        "^PASS.*_BURN_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "BURN"; $count_pass++; continue }
         "^PASS.*_FT1_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT1"; $count_pass++; continue }
         "^PASS.*_FT2_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT2"; $count_pass++; continue }
         "^PASS.*_FT3_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT3"; $count_pass++; continue }
@@ -242,6 +260,7 @@ foreach ($file in $log_files) {
         "^FAIL.*_PT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT3"; $count_fail++; continue }
         "^FAIL.*_PT4_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT4"; $count_fail++; continue }
         "^FAIL.*_PT_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT"; $count_fail++; continue }
+        "^FAIL.*_BURN_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "BURN"; $count_fail++; continue }
         "^FAIL.*_FT1_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT1"; $count_fail++; continue }
         "^FAIL.*_FT2_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT2"; $count_fail++; continue }
         "^FAIL.*_FT3_" { join_and_move_fail -log_dir $final_LOG_FOLDER -file_name $fileName -state "FT3"; $count_fail++; continue }
@@ -257,49 +276,52 @@ foreach ($file in $log_files) {
 foreach ($tram in $cac_tram_test) {
     $folderPath_P = Join-Path $passFolder $tram
     $folderPath_F = Join-Path $failFolder $tram
+    $items_P = Get-ChildItem -Path $folderPath_P -ErrorAction SilentlyContinue
+    $items_F = Get-ChildItem -Path $folderPath_F -ErrorAction SilentlyContinue
 
-    if (Test-Path $folderPath_P) {
-        $items_P = Get-ChildItem -Path $folderPath_P -ErrorAction SilentlyContinue
-        if (-not $items_P) {
-            Remove-Item -Path $folderPath_P -Recurse -Force -ErrorAction SilentlyContinue
-        }
-    }
-
-    if (Test-Path $folderPath_F) {
-        $items_F = Get-ChildItem -Path $folderPath_F -ErrorAction SilentlyContinue
-        if (-not $items_F) {
-            Remove-Item -Path $folderPath_F -Recurse -Force -ErrorAction SilentlyContinue
-        }
-    }
+    if (-not $items_P) { Remove-Item -Path $folderPath_P -Recurse -Force }
+    if (-not $items_F) { Remove-Item -Path $folderPath_F -Recurse -Force }
 }
-$path_600I=Join-Path $passFolder "600I"
+
+# =================== Gom file 600I vào folder riêng ======================
+# $path_600I=""
+# foreach ($tram in $cac_tram_test) {
+#     $folderPath_P = Join-Path $passFolder $tram
+#     if (Test-Path $folderPath_P) {
+#         $files600I = Get-ChildItem -Path $folderPath_P -File -Filter "*_600I_*" -ErrorAction SilentlyContinue
+#         if ($files600I -and $files600I.Count -gt 0) {
+#             $newFolder = Join-Path $folderPath_P "600I_Files"
+#             $path_600I=$nameFolder
+#             New-Item -Path $newFolder -ItemType Directory -Force | Out-Null
+#             foreach ($f in $files600I) {
+#                 try { Move-Item -Path $f.FullName -Destination $newFolder -Force }
+#                 catch { Write-Host "Error moving file $($f.FullName) to $newFolder" -ForegroundColor Red }
+#             }
+#             Write-Host "Moved $($files600I.Count) file 600I  $tram to 600I_Files folder " -ForegroundColor Green
+#         }
+#     }
+# }
 
 # =================== Gom file khác loại (.log/.txt) vào folder riêng ======================
-Write-Host "`n"
-Write-Host "============ Gom file khac (png, wav) =============" -ForegroundColor Cyan
 foreach ($tram in $cac_tram_test) {
     $folderPath_P = Join-Path $passFolder $tram
     if (Test-Path $folderPath_P) {
         $otherFiles = Get-ChildItem -Path $folderPath_P -File -ErrorAction SilentlyContinue |
-                      Where-Object { $_.Extension -notin @(".log", ".txt") }
-        if ($otherFiles -and @($otherFiles).Count -gt 0) {
+        Where-Object { $_.Extension -notin @(".log", ".txt") }
+        if ($otherFiles -and $otherFiles.Count -gt 0) {
             $newFolder = Join-Path $folderPath_P "Other_Files"
             New-Item -Path $newFolder -ItemType Directory -Force | Out-Null
             foreach ($f in $otherFiles) {
-                try {
-                    Move-Item -Path $f.FullName -Destination $newFolder -Force
-                }
-                catch {
-                    Write-Host "Error moving file $($f.FullName) to $newFolder" -ForegroundColor Red
-                }
+                try { Move-Item -Path $f.FullName -Destination $newFolder -Force }
+                catch { Write-Host "Error moving file $($f.FullName) to $newFolder" -ForegroundColor Red }
             }
-            Write-Host "Moved $(@($otherFiles).Count) file khac tram $tram to Other_Files folder" -ForegroundColor Green
+            Write-Host "Move $($otherFiles.Count) file(png,wav) $tram folder Other_Files" -ForegroundColor Green
         }
     }
 }
 
 Write-Host "`n"
-Write-Host "============ Loc FTU-FCD =============" -ForegroundColor Cyan
+Write-Host "============ Loc FTU-FCD ============="
 Start-Sleep -Seconds 1
 Write-Host "`n"
 
@@ -307,7 +329,6 @@ Write-Host "`n"
 $wrongVersionFolder = Join-Path $parent_of_log "WRONG_VERSION"
 New-Item -Path $wrongVersionFolder -ItemType Directory -Force | Out-Null
 
-$count_wrong_version = 0
 #================= Kiểm tra FTU/FCD trong PASS ===================
 foreach ($tram in $cac_tram_test) {
     $folderPath_P = Join-Path $passFolder $tram
@@ -329,6 +350,7 @@ foreach ($tram in $cac_tram_test) {
                 try {
                     Move-Item -Path $f.FullName -Destination $wrongVersionFolder -Force
                     Write-Host "Moved wrong version file $($f.Name) from $tram to WRONG_VERSION" -ForegroundColor Magenta
+                    # Tang bien dem file sai version
                     $count_wrong_version++
                 }
                 catch {
@@ -340,7 +362,7 @@ foreach ($tram in $cac_tram_test) {
 }
 
 Write-Host "`n"
-Write-Host "============ Loc trung MAC =============" -ForegroundColor Cyan
+Write-Host "============ Loc trung mac ============="
 Start-Sleep -Seconds 1
 Write-Host "`n"
 
@@ -350,17 +372,16 @@ New-Item -Path $duplicateMacFolder -ItemType Directory -Force | Out-Null
 
 function remove_duplicate_mac {
     param ([string]$tramFolder)
-    if (-not (Test-Path $tramFolder)) { return 0 }
+    if (-not (Test-Path $tramFolder)) { return }
 
     $logFiles = Get-ChildItem -Path $tramFolder -File -ErrorAction SilentlyContinue |
                 Where-Object { $_.Extension -in @(".log", ".txt") }
 
     $groups = $logFiles | Group-Object {
-        if ($_.Name -match "([^_]{12,}_)") { $matches[1].TrimEnd("_") }
+        if ($_.Name -match "(_[^_]+_)") { $matches[1] }
         else { "NO_MAC" }
     }
 
-    $duplicateCount = 0
     foreach ($g in $groups) {
         if ($g.Count -gt 1 -and $g.Name -ne "NO_MAC") {
             $sorted = $g.Group | Sort-Object {
@@ -368,13 +389,15 @@ function remove_duplicate_mac {
                 else { 0 }
             } -Descending
 
+            $keep = $sorted[0]
             $duplicates = $sorted | Select-Object -Skip 1
 
             foreach ($dup in $duplicates) {
                 try {
                     Move-Item -Path $dup.FullName -Destination $duplicateMacFolder -Force
-                    Write-Host "Moved duplicate MAC file $($dup.Name)" -ForegroundColor Yellow
-                    $duplicateCount++
+                    Write-Host "Moved duplicate MAC file $($dup.Name) (tram $tramFolder)" -ForegroundColor Yellow
+                    # Tang bien dem file bi trung MAC (dung script: scope de cap nhat tu trong ham)
+                    $script:total_duplicate++
                 }
                 catch {
                     Write-Host "Error moving duplicate file $($dup.FullName)" -ForegroundColor Red
@@ -382,10 +405,7 @@ function remove_duplicate_mac {
             }
         }
     }
-    return $duplicateCount
 }
-
-$total_duplicate = 0
 
 #================= Áp dụng cho tất cả trạm PASS ===================
 foreach ($tram in $cac_tram_test) {
@@ -395,32 +415,23 @@ foreach ($tram in $cac_tram_test) {
     else {
         $folderPath_P = Join-Path $passFolder $tram
         remove_duplicate_mac -tramFolder $folderPath_P
-        $total_duplicate += remove_duplicate_mac -tramFolder $folderPath_P
     }
 
 
 
 }
-#================= 600I remove dup mac===================
-    
-if ([string]::IsNullOrWhiteSpace($path_600I)) {
-    Write-Warning "Folder is null or empty, skipping..."
-    
-}
-else {
-    remove_duplicate_mac -tramFolder $path_600I
-}
+
+
 
 Write-Host "`n`n"
-Write-Host "============ TONG HOP SO LIEU =============" -ForegroundColor Green
+Write-Host "============ Tong hop so lieu ============="
 Start-Sleep -Seconds 1
 
-# =================== Đếm số file log/txt trong từng trạm ======================
 foreach ($tram in $cac_tram_test) {
     $folderPath_P = Join-Path $passFolder $tram
     if (Test-Path $folderPath_P) {
         $logFiles = Get-ChildItem -Path $folderPath_P -File -ErrorAction SilentlyContinue |
-                    Where-Object { $_.Extension -in @(".log", ".txt") }
+        Where-Object { $_.Extension -in @(".log", ".txt") }
         $countLogs = @($logFiles).Count
         Write-Host "Tram $tram : $countLogs file log/txt" -ForegroundColor Cyan
     }
@@ -439,7 +450,5 @@ catch {
     Write-Host "Error when printing summary: $_" -ForegroundColor Red
 }
 
-Write-Host "`n"
-Write-Host "============ HOAN THANH =============" -ForegroundColor Green
 [System.Console]::Out.Flush()
 Start-Sleep -Milliseconds 300
