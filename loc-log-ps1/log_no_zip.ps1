@@ -141,7 +141,7 @@ if (Test-Path $failFolder) {
 New-Item -Path $passFolder -ItemType Directory -Force | Out-Null
 New-Item -Path $failFolder -ItemType Directory -Force | Out-Null
 
-$cac_tram_test = @("DL","PT" ,"PT0", "PT1", "PT2", "PT3", "PT4", "BURN", "FT1", "FT2", "FT3", "FT4", "FT5", "FT6", "FT7","600I")
+$cac_tram_test = @("DL","PT" ,"PT0", "PT1", "PT2", "PT3", "PT4", "BURN", "FT1", "FT2", "FT3", "FT4", "FT5", "FT6", "FT7","600I","25G")
 $cac_tram_test | ForEach-Object {
     New-Item -Path (Join-Path $passFolder $_) -ItemType Directory -Force | Out-Null
     New-Item -Path (Join-Path $failFolder $_) -ItemType Directory -Force | Out-Null
@@ -215,7 +215,8 @@ foreach ($file in $log_files) {
     
     # Phan loai PASS
     switch -regex ($fileName) {
-	"^PASS.*_600I_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "600I"; $count_pass++; continue }
+	"^PASS.*_600I" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "600I"; $count_pass++; continue }
+	"^PASS.*_25G" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "25G"; $count_pass++; continue }
         "^PASS.*_DOWNLOAD_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "DL"; $count_pass++; continue }
         "^PASS.*_PT0_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT0"; $count_pass++; continue }
         "^PASS.*_PT1_" { join_and_move_pass -log_dir $final_LOG_FOLDER -file_name $fileName -state "PT1"; $count_pass++; continue }
