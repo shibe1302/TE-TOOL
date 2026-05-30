@@ -1,0 +1,8 @@
+{
+  "Host": "192.168.240.67",
+  "Port": 4422,
+  "Username": "cft",
+  "Password": "admin",
+  "RemoteDbPath": "/SW_database_QA/qa_notebook.db",
+  "RemoteMetaPath": "/SW_database_QA/meta.json"
+}

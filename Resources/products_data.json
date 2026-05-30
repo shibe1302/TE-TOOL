@@ -1,0 +1,270 @@
+[
+  {
+    "ProductName": "/UBNT_Test_Logs/WAVEFU00T01/",
+    "Model": "Wave-Fiber-ONU"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UXGP0000T01/",
+    "Model": "UXG-PRO"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UXGFIBERT01/",
+    "Model": "UXG-Fiber"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UXGENSE0T01/",
+    "Model": "UXG-Enterprise"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UXG00000T01/",
+    "Model": "UXG-MAX"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWXG240T01/",
+    "Model": "USW-EnterpriseXG-24"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWU60W0T01/",
+    "Model": "USW-Ultra-60W"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWU210WT01/",
+    "Model": "USW-Ultra-210W"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPH24PT01/",
+    "Model": "USW-PRO-HD-24-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPX800T01/",
+    "Model": "USW-PRO-XG-8-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPX480T01/",
+    "Model": "USW-PRO-XG-48"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPX240T01/",
+    "Model": "USW-PRO-XG-24"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPX000T01/",
+    "Model": "USW-PRO-XG-10-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPROH0T01/",
+    "Model": "USW-PRO-HD-24"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPROAGT01/",
+    "Model": "USW-Pro-Aggregation"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPR48PT01/",
+    "Model": "USW-Pro-48-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPR480T01/",
+    "Model": "USW-Pro-48"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPR24PT01/",
+    "Model": "USW-Pro-24-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPM48PT01/",
+    "Model": "USW-PRO-MAX-48-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPM24PT01/",
+    "Model": "USW-PRO-MAX-24-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPM16PT01/",
+    "Model": "USW-PRO-MAX-16-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWPM160T01/",
+    "Model": "USW-PRO-MAX-16"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWP8P00T01/",
+    "Model": "USW-PRO-8-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWP24P1T01/",
+    "Model": "USW-Pro-24-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWP24P0T01/",
+    "Model": "USW-PRO-HD-24-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWMN300T01/",
+    "Model": "USW-FLEX-MINI"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWMC001T01/",
+    "Model": "USW-MISSION-CRITICAL"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWLT8P4T01/",
+    "Model": "USW-Lite-8-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWLT16KT01/",
+    "Model": "USW-Lite-16-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USWFU000T01/",
+    "Model": "USW-Ultra"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USW624PET01/",
+    "Model": "USW-Enterprise-24-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USW48PE1T01/",
+    "Model": "USW-48-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USW48001T01/",
+    "Model": "USW-48-G2"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USW24PE1T01/",
+    "Model": "USW-24-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USW24001T01/",
+    "Model": "USW-24-G2"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USW16PE1T01/",
+    "Model": "USW-16-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USPUP004T01/",
+    "Model": "USP-PDU-PRO"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/USF8P000T01/",
+    "Model": "USW-Flex-2.5G-8-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UPX48P00T01/",
+    "Model": "USW-PRO-XG-48-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UPX24P00T01/",
+    "Model": "USW-PRO-XG-24-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UNVRPR00T01/",
+    "Model": "UNVR-PRO"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UNVRBT01T01/",
+    "Model": "UNVR-4"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UNASPR40T01/",
+    "Model": "UNAS-PRO-4"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UNASPR00T01/",
+    "Model": "UNAS-PRO"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UNASP800T01/",
+    "Model": "UNAS-PRO-8"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UNAS2W00T01/",
+    "Model": "UNAS-2-White"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UNAS2B00T01/",
+    "Model": "UNAS-2-Black"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UISPS000T01/",
+    "Model": "UISP-S-Plus"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UDMPSE00T01/",
+    "Model": "UDM-SE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UDMPRX00T01/",
+    "Model": "UDM-Pro-Max"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UDMP000NT01/",
+    "Model": "UDM-PRO"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UDBSW000T01/",
+    "Model": "UDB-Switch"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UCKSSD00T01/",
+    "Model": "UCKP-SSD"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UCKG2P01T01/",
+    "Model": "UCKP"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UCKG2001T01/",
+    "Model": "UCKG2"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UCGUR001T01/",
+    "Model": "UCG_ULTRA"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UCGMXNS1T01/",
+    "Model": "UCG_MAX"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UCGMAX01T01/",
+    "Model": "UCG_MAX"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UCGFIBERT01/",
+    "Model": "UCG_Fiber"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/UACSD1TBT01/",
+    "Model": "UCG_MAX"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/U6S80000T01/",
+    "Model": "USW-Enterprise-8-PoE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/ESWA0000T01/",
+    "Model": "ECS-Aggregation"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/EGC00000T01/",
+    "Model": "EFG"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/ECS24P00T01/",
+    "Model": "ECS-24-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/EAVAG000T01/",
+    "Model": "EAV-Aggregation"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/EAV24P00T01/",
+    "Model": "EAV-24-POE"
+  },
+  {
+    "ProductName": "/UBNT_Test_Logs/CKEN0000T01/",
+    "Model": "CK-Enterprise"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "Host": "192.168.240.",
+  "User": "user",
+  "Password": "ubnt",
+  "Protocol": "SFTP",
+  "PortNumber": "4422",
+  "LocalDownloadDestination": "C:\\Program Files (x86)\\WinSCP",
+  "WinscpDLL": "C:\\Program Files (x86)\\WinSCP\\WinSCPnet.dll",
+  "RemoteFolderScan": [
+    "a"
+  ],
+  "MacFilePath": "C:\\Program Files (x86)\\WinSCP\\license.txt",
+  "MaxThreadScan": "10",
+  "ScanLocalMode": false
+}
